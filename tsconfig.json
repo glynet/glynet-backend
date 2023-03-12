@@ -1,0 +1,14 @@
+{
+    "compilerOptions": {
+        "sourceMap": true,
+        "outDir": "build",
+        "strict": true,
+        "lib": ["esnext"],
+        "target": "ES2020",
+        "module": "CommonJS",
+        "esModuleInterop": true,
+        "skipLibCheck": true,
+        "isolatedModules": true
+    },
+    "include": ["source/**/*"]
+}

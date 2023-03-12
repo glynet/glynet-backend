@@ -1,0 +1,26 @@
+doctype html
+html
+    include includes/head
+
+    body
+        #root
+            if profile === undefined 
+                h1 Böyle biş iyok orospu
+            else
+                .profile 
+                    .banner-container
+                        if profile.banner.type === "image"
+                            img.banner(src=profile.banner.url)
+                        else if profile.banner.type === "video"
+                            video.banner(src=profile.banner.url, autoplay="true", muted="true", loop="true")
+                        else
+                            .banner
+                    .profile-content 
+                        .avatar-container
+                            img.avatar(src=profile.avatar, alt="@"+profile.username+"'s profile picture")
+                        .name
+                            span=profile.name
+                            span=profile.username
+                        
+
+        

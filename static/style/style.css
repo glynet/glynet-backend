@@ -1,0 +1,45 @@
+* {
+    padding: 0;
+    margin: 0;
+    box-sizing: border-box;
+    object-fit: cover;
+}
+
+#root {
+    max-width: 600px;
+    height: 100vh;
+    margin: 0px auto;
+    position: relative;
+}
+
+body {
+    background-color: #fff;
+    font-family: "Gilroy-Medium", sans-serif;
+}
+
+.profile {
+    margin-top: 15px;
+    border-radius: 15px;
+    box-shadow: 0 0 10px 0 rgba(225, 225, 225, 0.928);
+}
+
+.profile .banner-container .banner {
+    height: 240px;
+    width: 600px;
+    border-radius: 15px;
+    background-color: red;
+}
+
+.profile .avatar-container img.avatar {
+    height: 130px;
+    width: 130px;
+    border-radius: 100%;
+}
+
+.profile .profile-content {
+    padding: 15px;
+}
+
+.profile .avatar-container {
+    margin-top: -100px;
+}

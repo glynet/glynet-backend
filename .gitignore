@@ -1,0 +1,10 @@
+/.idea
+/.git
+
+/attachments
+/node_modules
+/build
+/log
+
+yarn.lock
+.DS_Store

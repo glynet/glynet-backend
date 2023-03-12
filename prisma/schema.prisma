@@ -1,0 +1,277 @@
+generator client {
+  provider        = "prisma-client-js"
+  previewFeatures = ["fullTextSearch", "fullTextIndex"]
+}
+
+datasource db {
+  provider = "mysql"
+  url      = "mysql://root:test@localhost:3306/glynet"
+}
+
+model blocks {
+  id        Int         @id @default(autoincrement())
+  client_id String      @db.VarChar(50)
+  user_id   String      @db.VarChar(30)
+  type      blocks_type
+  timestamp DateTime    @default(now()) @db.Timestamp(0)
+}
+
+model bookmarks {
+  id   Int    @id @default(autoincrement())
+  post String @db.VarChar(30)
+  user String @db.VarChar(30)
+  date String @db.VarChar(30)
+}
+
+model circle_members {
+  id        Int    @id @default(autoincrement())
+  circle_id String @db.VarChar(30)
+  user_id   String @db.VarChar(30)
+  added_at  String @db.VarChar(30)
+}
+
+model circles {
+  id         Int    @id @default(autoincrement())
+  snowflake  String @db.VarChar(30)
+  name       String @db.VarChar(30)
+  emoji      String @db.VarChar(30)
+  author_id  String @db.VarChar(30)
+  created_at String @db.VarChar(30)
+}
+
+model closed_friends {
+  id     Int    @id @default(autoincrement())
+  user   String @db.VarChar(30)
+  people String @db.VarChar(30)
+  date   String @db.VarChar(50)
+}
+
+model comment_likes {
+  id         Int    @id @default(autoincrement())
+  user_id    String @db.VarChar(30)
+  comment_id String @db.VarChar(30)
+  date       String @db.VarChar(30)
+}
+
+model comments {
+  id          Int    @id @default(autoincrement())
+  snowflake   String @db.VarChar(60)
+  author_id   String @db.VarChar(30)
+  content     String @db.VarChar(512)
+  attachments String @db.LongText
+  replied_to  String @db.VarChar(30)
+  post_id     String @db.VarChar(30)
+  type        String @db.VarChar(30)
+  flags       Int
+  timestamp   Int
+}
+
+model emojis {
+  id          Int    @id @default(autoincrement())
+  owner       String @db.VarChar(30)
+  name        String @db.VarChar(100)
+  type        String @db.VarChar(30)
+  content     String @db.LongText
+  upload_date String @db.VarChar(30)
+}
+
+model hidden_post {
+  id      Int    @id @default(autoincrement())
+  user_id String @db.VarChar(30)
+  postid  String @db.VarChar(30)
+}
+
+model likes {
+  id      Int    @id @default(autoincrement())
+  user_id Int
+  post_id Int
+  date    String @db.VarChar(30)
+}
+
+model login_activity {
+  id         Int    @id @default(autoincrement())
+  client_id  String @db.VarChar(30)
+  ip_address String @db.VarChar(30)
+  browser    String @db.VarChar(60)
+  os         String @db.VarChar(60)
+  location   String @db.VarChar(60)
+  timezone   String @db.VarChar(30)
+  date       String @db.VarChar(30)
+}
+
+model notifications {
+  id           Int     @id @default(autoincrement())
+  user_id      String  @db.VarChar(30)
+  type         String  @db.VarChar(30)
+  data         Json
+  timestamp    String  @db.VarChar(30)
+  mark_as_read Boolean
+}
+
+model posts {
+  id          Int      @id @default(autoincrement())
+  snowflake   String   @db.VarChar(60)
+  author_id   Int
+  content     String   @db.Text
+  attachments String   @db.LongText
+  created_at  String   @db.VarChar(32)
+  updated_at  DateTime @default(now()) @db.Timestamp(0)
+  location    String   @db.VarChar(64)
+  archived    Boolean
+
+  @@index([author_id], map: "users")
+}
+
+model premium {
+  id            Int    @id @default(autoincrement())
+  client_id     String @db.VarChar(30)
+  premium_type  String @db.VarChar(30)
+  premium_since String @db.VarChar(30)
+  premium_end   String @db.VarChar(30)
+  is_active     String @db.VarChar(30)
+  gift_from     String @db.VarChar(30)
+}
+
+model privacy_preferences {
+  id                 Int                               @id @default(autoincrement())
+  client_id          String                            @db.VarChar(32)
+  hide_followings    Boolean
+  private_profile    Boolean
+  filter_nsfw        Boolean
+  hide_search_engine Boolean
+  scan_messages      privacy_preferences_scan_messages
+  updated_at         DateTime                          @default(now()) @db.Timestamp(0)
+}
+
+model reset_password {
+  id        Int    @id @default(autoincrement())
+  user_id   String @db.VarChar(30)
+  token     String @db.VarChar(120)
+  timestamp String @db.VarChar(30)
+}
+
+model shot_likes {
+  id        Int    @id @default(autoincrement())
+  user_id   String @db.VarChar(30)
+  shot_id   String @db.VarChar(30)
+  timestamp String @db.VarChar(30)
+}
+
+model shot_views {
+  id        Int    @id @default(autoincrement())
+  user_id   String @db.VarChar(30)
+  shot_id   String @db.VarChar(30)
+  timestamp String @db.VarChar(30)
+}
+
+model shots {
+  id         Int    @id @default(autoincrement())
+  snowflake  String @db.VarChar(60)
+  author_id  String @db.VarChar(30)
+  attachment String @db.VarChar(120)
+  thumbnail  String @db.VarChar(120)
+  duration   String @db.VarChar(30)
+  flags      String @db.VarChar(60)
+  timestamp  String @db.VarChar(60)
+}
+
+model trending_hashtags {
+  id        Int    @id @default(autoincrement())
+  name      String @db.VarChar(50)
+  post_id   String @db.VarChar(20)
+  type      String @db.VarChar(20)
+  date      String @db.VarChar(30)
+  unix_date String @db.VarChar(60)
+  location  String @db.VarChar(20)
+}
+
+model user_activities {
+  id              Int    @id @default(autoincrement())
+  snowflake       String @db.VarChar(64)
+  client          String @db.VarChar(32)
+  icon            String @db.VarChar(256)
+  text            String @db.VarChar(256)
+  visible_to      String @db.VarChar(30)
+  status          String @db.VarChar(30)
+  start_timestamp String @db.VarChar(32)
+  duration        String @db.VarChar(32)
+}
+
+model users {
+  id                 Int            @id @default(autoincrement())
+  totp_secret        String         @db.VarChar(128)
+  snowflake          String         @db.VarChar(128)
+  token              String         @db.VarChar(256)
+  username           String         @db.VarChar(32)
+  name               String         @db.VarChar(256)
+  email              String         @db.VarChar(256)
+  password           String         @db.VarChar(512)
+  avatar             String         @db.VarChar(256)
+  banner             String         @db.VarChar(256)
+  language           users_language
+  flags              Int
+  points             Int
+  accent_color       String         @db.VarChar(64)
+  verify_code        String         @db.VarChar(64)
+  about              String         @db.VarChar(256)
+  theme              users_theme
+  location           String         @db.VarChar(128)
+  website            String         @db.VarChar(128)
+  created_at         String         @db.VarChar(32)
+  updated_at         DateTime       @default(now()) @db.Timestamp(0)
+  two_fa_enabled     Boolean
+  notification_flags Int
+}
+
+model followings {
+  id           Int    @id @default(autoincrement())
+  follower_id  Int
+  following_id Int
+  timestamp    String @db.VarChar(30)
+  accept       Int
+}
+
+model user_notifications {
+  id         Int                     @id @default(autoincrement())
+  author_id  Int
+  user_id    Int
+  type       user_notifications_type
+  updated_at DateTime                @default(now()) @db.Timestamp(0)
+}
+
+model delete_account {
+  id        Int      @id @default(autoincrement())
+  client_id String   @db.VarChar(32)
+  token     String   @db.VarChar(32)
+  timestamp DateTime @db.Timestamp(0)
+}
+
+enum users_language {
+  tr
+  en
+  ru
+  de
+}
+
+enum users_theme {
+  light
+  dark
+  system
+}
+
+enum user_notifications_type {
+  all_notifications
+  only_posts
+  never
+}
+
+enum blocks_type {
+  block
+  mute
+}
+
+enum privacy_preferences_scan_messages {
+  trust_everyone
+  trust_common_friends
+  never_trust
+}

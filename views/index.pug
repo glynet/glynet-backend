@@ -1,0 +1,22 @@
+doctype html
+html
+    include includes/head
+
+    body
+        main#glynet
+            a: b Glynet?
+
+            - var login = true
+
+            if login
+                - var n = 1;
+                while n < 4
+                    br
+                    a=n++ + "..."
+                br
+                a İşte burada!
+            else
+                br
+                a Giriş yap!
+
+            
