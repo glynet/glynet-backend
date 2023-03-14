@@ -4,6 +4,7 @@ import Auth from "../../services/auth";
 import { findContentType } from "../../services/utils";
 import moment from "moment";
 import { calculateUserFlags } from "../../services/flags";
+import { getPrivacyDetails } from "../../services/get-privacy";
 
 const prisma = new PrismaClient();
 const notifications = express.Router();
@@ -18,12 +19,17 @@ notifications.get("/", async function (req: Request, res: Response) {
     const auth = await Auth(req, res);
     if (!auth) return;
 
+    const privacy = await getPrivacyDetails(auth.id);
+
     const response: any[] = [];
 
     const get_notifications = await prisma.notifications.findMany({
         take: 50,
         where: {
             user_id: auth.id.toString()
+        },
+        orderBy: {
+            id: "desc"
         }
     });
 
@@ -203,6 +209,15 @@ notifications.get("/", async function (req: Request, res: Response) {
 
     res.send({
         available: true,
+        follow_requests: {
+            is_private: privacy.is_private,
+            count: await prisma.followings.count({
+                where: {
+                    following_id: auth.id,
+                    accept: 0
+                }
+            })
+        },
         list: response
     });
 });
