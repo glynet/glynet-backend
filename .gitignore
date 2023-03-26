@@ -8,3 +8,6 @@
 
 yarn.lock
 .DS_Store
+
+output_video_file.mp4
+test.ts

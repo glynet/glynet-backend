@@ -26,5 +26,5 @@ export function findContentType(path: string): ContentType {
 }
 
 export function log(color: string, text: string): void {
-    return console.log(`\x1b[36m⚡️[GLYN3T]:\x1b[0m ${color}${text}\x1b[0m`);
+    return console.log(`\x1b[1m\x1b[36m⚡️[GLYN3T]:\x1b[0m ${color}${text}\x1b[0m`);
 }

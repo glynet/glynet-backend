@@ -9,14 +9,15 @@ import helmet from "helmet";
 import { log } from "./services/utils";
 import delay from "express-delay";
 
-import client from "./routes/client/client";
-import posts from "./routes/posts/posts";
-import comments from "./routes/posts/comments";
-import search from "./routes/search/search";
-import profile from "./routes/profile/profile";
-import notifications from "./routes/client/notifications";
-import settings from "./routes/client/settings";
+import comments from "./routes/comments/";
+import profile from "./routes/profile";
+import notifications from "./routes/notifications/";
+import client from "./routes/client/";
+import posts from "./routes/posts/";
 
+import settings from "./routes/settings/settings";
+import search from "./routes/search/search";
+import fs from "fs";
 dotenv.config();
 
 const app: Express = express();
@@ -24,13 +25,14 @@ const port: number = parseInt(process.env.PORT as string) || 3400;
 
 app.disable("etag");
 app.disable("x-powered-by");
+/*
 app.use(helmet({
     hidePoweredBy: true,
     frameguard: {
         action: "sameorigin"
     }
 }));
-
+*/
 // BUNU KONTROL ETMEYİ UNUTMA
 app.use((req: any, res: any, next: any) => {
     if (port !== 80 || !process.env.CSP_DISABLE) {
@@ -51,41 +53,49 @@ app.use("/cdn", express.static(path.join(__dirname, "../", "attachments")));
 app.use("/attachments", express.static(path.join(__dirname, "../", "attachments")));
 app.use("/static", express.static(path.join(__dirname, "../", "static")));
 
-app.use(delay(600));
+// app.use(delay(300));
 app.use(cors());
-app.use(useragent.express());
+//app.use(useragent.express());
+/*
 app.use(rateLimit({
     windowMs: 16000,
-    max: 24,
+    max: 32,
     message: {
+        status: false,
+        code: 0,
         message: "Biraz sakin ol",
+        list: []
     }
 }));
+*/
 app.use(bodyParser.urlencoded({ extended: false }));
 app.use(bodyParser.json());
 
-app.use("/api/@me/", (req: Request, res: Response, next: NextFunction) => {
+
+
+
+app.use("/api/@me/v1/", (req: Request, res: Response, next: NextFunction) => {
     console.log("");
-    log('\x1b[35m', `${req.method} ${req.originalUrl} (${res.statusCode})`);
+    log('\x1b[43m', `\x1b[37m ${req.method} \x1b[0m\x1b[33m ${req.originalUrl} (${res.statusCode})`);
 
     if (!req.headers.authorization) {
         return res.status(403).json({
             error: "No credentials sent!"
         });
     } else {
-        log('\x1b[35m', `Token: ${req.headers.authorization}`);
+        log('\x1b[33m', `Token => \x1b[37m${req.headers.authorization}`);
     }
 
     next();
 });
 
-app.use("/api/@me/posts", posts);
-app.use("/api/@me/search", search);
-app.use("/api/@me/profile", profile);
-app.use("/api/@me/comments", comments);
-app.use("/api/@me/client", client);
-app.use("/api/@me/notifications", notifications);
-app.use("/api/@me/settings", settings);
+app.use("/api/@me/v1/posts", posts);
+app.use("/api/@me/v1/search", search);
+app.use("/api/@me/v1/profile", profile);
+app.use("/api/@me/v1/comments", comments);
+app.use("/api/@me/v1/client", client);
+app.use("/api/@me/v1/notifications", notifications);
+app.use("/api/@me/v1/settings", settings);
 
 app.set("view engine", "pug");
 
@@ -116,9 +126,13 @@ app.use((err: any, req: Request, res: Response, next: NextFunction) => {
 
 app.listen(port, () => {
     console.log("");
-    log('\x1b[36m', `Server is running at http://localhost:${port}`);
+    log('\x1b[32m', `Brain woke up from sleep, browsing the network at \x1b[4mhttp://localhost:${port}`);
+
 });
 
 process.on("uncaughtException", (err) => {
-    console.log("🚀 ~ file: index.ts:118 ~ process.on ~ err:", err); 
+    console.log("\n\n\n");
+    log("\x1b[41m", "\x1b[37m ERROR \x1b[0m\x1b[31m Something went wrong...");
+    console.error(err);
+    console.log("\n\n\n");
 });

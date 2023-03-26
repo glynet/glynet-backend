@@ -118,6 +118,7 @@ model posts {
   updated_at  DateTime @default(now()) @db.Timestamp(0)
   location    String   @db.VarChar(64)
   archived    Boolean
+  is_loop     Boolean
 
   @@index([author_id], map: "users")
 }
@@ -246,6 +247,22 @@ model delete_account {
   timestamp DateTime @db.Timestamp(0)
 }
 
+model attachments {
+  id          Int                   @id @default(autoincrement())
+  snowflake   String                @db.VarChar(32)
+  user        Int
+  extension   attachments_extension
+  alt         String?               @db.VarChar(512)
+  type        attachments_type
+  external_id Int
+  audio       String                @db.VarChar(32)
+  width       Int
+  height      Int
+  duration    Int?
+  flags       Int
+  timestamp   DateTime              @default(now()) @db.Timestamp(0)
+}
+
 enum users_language {
   tr
   en
@@ -274,4 +291,21 @@ enum privacy_preferences_scan_messages {
   trust_everyone
   trust_common_friends
   never_trust
+}
+
+enum attachments_type {
+  post
+  loop
+  vibe
+  avatar
+  banner
+}
+
+enum attachments_extension {
+  mp4
+  png
+  jpg
+  jpeg
+  gif
+  mov
 }

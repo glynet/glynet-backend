@@ -4,7 +4,7 @@ import Auth from "../../services/auth";
 import * as crypto from "crypto";
 import { calculateUserFlags } from "../../services/flags";
 import { generateSnowflakeID } from "../../services/generator"
-import { importFiles } from "../../services/import-files"
+import { importFile } from "../../services/import-files"
 
 import { sendMail } from "../../services/mail";
 import * as argon2 from "argon2";
@@ -72,7 +72,7 @@ settings.get("/email_available", async function (req: Request, res: Response) {
     });
 });
 
-settings.put("/upload_avatar", upload.array("file"), async function (req: Request, res: Response) {
+/* settings.put("/upload_avatar", upload.array("file"), async function (req: Request, res: Response) {
     const auth = await Auth(req, res);
     if (!auth) return;
 
@@ -96,7 +96,7 @@ settings.put("/upload_avatar", upload.array("file"), async function (req: Reques
         }
     }
 
-    const importer = await importFiles([(req.files as any)[0]], `./attachments/${auth.snowflake}/avatars/${generateSnowflakeID()}/`);
+    const importer = await importFile([(req.files as any)[0]], `./attachments/${auth.snowflake}/avatars/${generateSnowflakeID()}/`);
     avatar_url = (importer.filePaths as string);
 
     const update = await prisma.users.update({
@@ -114,9 +114,9 @@ settings.put("/upload_avatar", upload.array("file"), async function (req: Reques
     return res.send({
         status: "error"
     });
-});
+}); */
 
-settings.put("/upload_banner", upload.array("file"), async function (req: Request, res: Response) {
+/* settings.put("/upload_banner", upload.array("file"), async function (req: Request, res: Response) {
     const auth = await Auth(req, res);
     if (!auth) return;
 
@@ -139,7 +139,7 @@ settings.put("/upload_banner", upload.array("file"), async function (req: Reques
         } 
     }
 
-    const importer = await importFiles([(req.files as any)[0]], `./attachments/${auth.snowflake}/banners/${generateSnowflakeID()}/`);
+    const importer = await importFile([(req.files as any)[0]], `./attachments/${auth.snowflake}/banners/${generateSnowflakeID()}/`);
     banner_url = (importer.filePaths as string);
     
     const update = await prisma.users.update({
@@ -157,7 +157,7 @@ settings.put("/upload_banner", upload.array("file"), async function (req: Reques
     return res.send({
         status: "error"
     });
-});
+}); */
 
 settings.post("/edit_profile", async function (req: Request, res: Response) {
     const auth = await Auth(req, res);

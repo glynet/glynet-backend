@@ -1,6 +1,6 @@
 import { authenticator } from "otplib";
 import qrcode from "qrcode";
-import { createCanvas, loadImage } from "canvas";
+// import { createCanvas, loadImage } from "canvas";
 
 function totpCode(secret: string) {
     return authenticator.generate(secret);
@@ -11,7 +11,7 @@ function totpSecret() {
 }
 
 async function totpQrCode(user: string, secret: string) {
-    const otpauth = authenticator.keyuri(user, "Glynet", secret);
+    /* const otpauth = authenticator.keyuri(user, "Glynet", secret);
 
     async function create(dataForQRcode: string, center_image: string, width: number, cwidth: number) {
         const canvas = createCanvas(width, width);
@@ -41,7 +41,9 @@ async function totpQrCode(user: string, secret: string) {
         __dirname + "/../../../static/assets/images/qr-logo.png",
         512,
         140
-    );
+    ); */
+
+    return false;
 }
 
 export { totpCode, totpSecret, totpQrCode };
