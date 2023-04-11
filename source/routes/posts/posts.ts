@@ -208,7 +208,6 @@ export default async function handler(req: Request, res: Response) {
                 if (params["q"]) {
                     where = {
                         snowflake: params.q.toString(),
-                        is_loop: false
                     }
                 } else {
                     return throwError(128, "The post unavailable");
@@ -230,7 +229,7 @@ export default async function handler(req: Request, res: Response) {
                     author_id: {
                         in: ids
                     },
-                    is_loop: false
+                    // is_loop: false
                 }
                 break;
         }
@@ -266,6 +265,8 @@ export default async function handler(req: Request, res: Response) {
             response.push({
                 id: post.snowflake,
                 publisher: author,
+
+                is_loop: post.is_loop,
 
                 full_text: post.content,
                 text_range: [0, post.content.length],

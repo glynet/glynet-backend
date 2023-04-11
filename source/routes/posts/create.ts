@@ -69,7 +69,7 @@ export default async function handler(req: Request, res: Response) {
 
                     if (addAttachmentToDatabase) {
                         console.log(addAttachmentToDatabase.id.toString());
-                        attachments = addAttachmentToDatabase.id.toString();
+                        attachments += addAttachmentToDatabase.id.toString() + ",";
                     } else {
                         return res.send({
                             is_entry_created: false,
@@ -90,7 +90,7 @@ export default async function handler(req: Request, res: Response) {
                     author_id: auth.id,
                     content: safe_post_text,
                     is_loop: type === "loops",
-                    attachments: attachments,
+                    attachments: attachments.slice(0, -1),
                     created_at: moment().unix().toString(),
                     updated_at: new Date(),
                     location: safe_location,
@@ -100,14 +100,16 @@ export default async function handler(req: Request, res: Response) {
         
             if (create) {
                 if (attachments.length !== 0) {
-                    await prisma.attachments.update({
-                        where: {
-                            id: Number(attachments)
-                        },
-                        data: {
-                            external_id: create.id
-                        }
-                    });
+                    for (const attachment of attachments.slice(0, -1).split(",")) {
+                        await prisma.attachments.update({
+                            where: {
+                                id: Number(attachment)
+                            },
+                            data: {
+                                external_id: create.id
+                            }
+                        });   
+                    }
                 }
 
                 return res.send({

@@ -113,9 +113,26 @@ export async function importFile({
         .audioCodec("libmp3lame")
         .on("error", (err) => {
             console.error("Error extracting audio:", err);
-        })
+        })        
         .run();
-    
+
+       
+          
+        ffmpeg(compress.getPath(fileName, true, true))
+        .setStartTime(0)
+        .setDuration(5)
+        .outputOptions([
+            '-pix_fmt rgb24',
+            '-r 10',
+            '-vf scale=320:-1',
+            '-loop 0'
+        ])
+        .output(compress.getPath(id + "." + "gif", true, true))        
+        .on("error", (err) => {
+            console.error("Error creating GIF:", err);
+        })       
+        .run();
+
         if (metaData) {
             height = metaData.streams[0].height;
             width = metaData.streams[0].width;

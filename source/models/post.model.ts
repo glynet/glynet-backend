@@ -3,6 +3,8 @@ import { UserType } from "../helpers/getUser";
 export type Post = {
     id: string;
     publisher: UserType;
+
+    is_loop: boolean;
     
     full_text: string;
     text_range: number[];
