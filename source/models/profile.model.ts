@@ -19,6 +19,11 @@ export type Profile = {
         accent_color: string;
         location: string;
         website: string;
+        color_palette: {
+            average_color_rgb: string;
+            average_color_hex: string;
+            is_dark: boolean;
+        };
         banner: {
             url: string;
             type: ContentType;
@@ -36,6 +41,8 @@ export type Profile = {
     premium: PremiumDetails;
     following: FollowingStatus;
     is_private: boolean;
+    is_muted: boolean;
+    is_blocked: boolean;
 };
 
 export type FollowResponse = "following" | "waiting" | "unfollow" | "error";

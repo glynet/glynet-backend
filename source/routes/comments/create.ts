@@ -4,29 +4,30 @@ import Auth from "../../services/auth";
 import { generateSnowflakeID } from "../../services/generator";
 import moment from "moment";
 import { increaseJots } from "../../services/jots";
+import { Comment } from "../../models/comment.model";
+import getUser from "../../helpers/getUser";
 
 const prisma = new PrismaClient();
 
-export default async function handler(req: Request, res: Response) {
+type CreateComment = {
+    status: boolean;
+    append?: Comment
+}
+
+export default async function handler(req: Request, res: Response<CreateComment>) {
     const auth = await Auth(req, res);
     if (!auth) return;
 
-    const { post_id, content, reply_id, gif_url } = req.body;
+    const { post_id, content, reply_id, is_gif } = req.body;
 
-    if (post_id && (content || gif_url)) {
+    if (post_id && content) {
         const post_control = await prisma.posts.findMany({
             where: { snowflake: post_id.toString() }
         });
 
         if (post_control) {
             let reply_controlled_id: string = "0";
-            let safe_gif_url: string = "";
             let safe_text: string = "";
-
-            if (gif_url) {
-                // gerçekten url mi kontrol edilecek
-                safe_gif_url = gif_url;
-            }
 
             if (content) {
                 if (content.length <= 256) {
@@ -36,13 +37,13 @@ export default async function handler(req: Request, res: Response) {
 
             if (reply_id) {
                 const reply_control = await prisma.comments.findMany({
-                    where: { 
+                    where: {
                         snowflake: reply_id.toString(),
                         post_id: post_control[0].id.toString()
                     }
                 });
 
-                if (!reply_control) {                    
+                if (!reply_control) {
                     return res.send({
                         status: false
                     });
@@ -58,11 +59,10 @@ export default async function handler(req: Request, res: Response) {
                     snowflake: comment_snowflake,
                     author_id: auth.id.toString(),
                     content: safe_text,
-                    attachments: safe_gif_url,
                     replied_to: reply_controlled_id,
                     post_id: post_control[0].id.toString(),
                     type: "post",
-                    flags: 0,
+                    flags: is_gif ? 8 : 0,
                     timestamp: moment().unix()
                 }
             });
@@ -74,25 +74,19 @@ export default async function handler(req: Request, res: Response) {
                     status: true,
                     append: {
                         id: comment_snowflake,
-                        user: {
-                            id: auth.snowflake,
-                            name: auth.name,
-                            username: auth.username,
-                            avatar: auth.avatar,
-                            flags: Number(auth.flags)
-                        },
-                        comment: {
-                            content: content,
-                            attachments: safe_gif_url.length !== 0 ? [safe_gif_url] : [],
-                            likes: {
-                                count: 0,
-                                is_liked: false
-                            }
-                        },
-                        position: 0,
+                        user: await getUser(auth.id),
+
+                        content: content,
+                        react_count: 0,
+                        is_liked: false,
+
                         post_id: post_id,
-                        replied_to: reply_controlled_id,
-                        flags: 0,
+
+                        replied_to: "",
+                        replies: [],
+                        reply_count: 0,
+
+                        flags: is_gif ? 8 : 0,
                         timestamp: moment().unix()
                     }
                 });

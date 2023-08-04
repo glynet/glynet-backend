@@ -5,7 +5,7 @@ export type Post = {
     publisher: UserType;
 
     is_loop: boolean;
-    
+
     full_text: string;
     text_range: number[];
 
@@ -30,7 +30,7 @@ export type Post = {
     };
 
     is_liked: boolean;
-    is_saved: boolean; 
+    is_saved: boolean;
 
     tags: string[]|null;
     poll: null;

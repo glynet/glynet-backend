@@ -16,9 +16,9 @@ export type UserType = {
     }
 }
 
-export default async function getUser(user_id: string|number, id_type: IdTypes = "id"): Promise<UserType> {
+export default async function getUser(user_id: string|number, id_type: IdTypes = "id", for_system = false): Promise<UserType> {
     let where_query: any = {
-        id: user_id
+        id: Number(user_id)
     };
 
     if (id_type === "snowflake") {
@@ -47,7 +47,7 @@ export default async function getUser(user_id: string|number, id_type: IdTypes =
         return {
             is_user_ready: true,
             data: {
-                id: user_data.snowflake,
+                id: for_system ? String(user_data.id) : user_data.snowflake,
                 name: user_data.name,
                 username: user_data.username,
                 avatar: await getAvatar(user_data),

@@ -11,7 +11,7 @@ function totpSecret() {
 }
 
 async function totpQrCode(user: string, secret: string) {
-    /* const otpauth = authenticator.keyuri(user, "Glynet", secret);
+    /* const otpauth = authenticator.keyuri(user, "Looplens", secret);
 
     async function create(dataForQRcode: string, center_image: string, width: number, cwidth: number) {
         const canvas = createCanvas(width, width);

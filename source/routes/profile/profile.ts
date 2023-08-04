@@ -5,7 +5,7 @@ import Auth from "../../services/auth";
 import { findContentType } from "../../services/utils";
 import { getPremiumDetails } from "../../services/premium";
 import { getPrivacyDetails } from "../../services/get-privacy";
-
+import { getAverageColor } from 'fast-average-color-node';
 const prisma = new PrismaClient();
 
 export default async function handler(req: Request, res: Response<ProfileResponse>) {
@@ -30,14 +30,32 @@ export default async function handler(req: Request, res: Response<ProfileRespons
                     following_id: profile_data.id
                 }
             });
+            console.log(control_following, profile_data.id)
             const following_status = control_following ? control_following.accept.toString() === "1" ? "following" : "on_request" : "no_follow";
+
+            const control_barrier = await prisma.blocks.findMany({
+                where: {
+                    client_id: String(auth.id),
+                    user_id: String(profile_data.id)
+                }
+            })
+            let is_muted = false
+            let is_blocked = false
+
+            for (const barrier of control_barrier) {
+                if (barrier.type === "block") {
+                    is_blocked = true
+                } else if (barrier.type === "mute") {
+                    is_muted = true
+                }
+            }
 
             const followers = await prisma.followings.count({
                 where: {
                     following_id: profile_data.id
                 }
             });
-    
+
             let followings = 0;
             if (!privacy.hide_followings || (privacy.hide_followings && auth.id === profile_data.id)) {
                 const get_followings = await prisma.followings.count({
@@ -47,7 +65,12 @@ export default async function handler(req: Request, res: Response<ProfileRespons
                 });
                 followings = get_followings;
             }
-            
+
+            let colors: any;
+            await getAverageColor(profile_data.avatar.replace("cdn", "attachments")).then((color: any) => {
+                colors = color
+            });
+
             return res.send({
                 available: true,
                 profile: {
@@ -62,6 +85,11 @@ export default async function handler(req: Request, res: Response<ProfileRespons
                         accent_color: profile_data.accent_color,
                         location: profile_data.location,
                         website: profile_data.website,
+                        color_palette: {
+                            average_color_rgb: colors.rgb,
+                            average_color_hex: colors.hex,
+                            is_dark: colors.isDark
+                        },
                         banner: {
                             url: profile_data.banner,
                             type: findContentType(profile_data.banner),
@@ -78,7 +106,9 @@ export default async function handler(req: Request, res: Response<ProfileRespons
                     },
                     premium: await getPremiumDetails(profile_data.id.toString(), false),
                     following: following_status,
-                    is_private: privacy.is_private
+                    is_private: privacy.is_private,
+                    is_muted,
+                    is_blocked
                 }
             });
         } else {

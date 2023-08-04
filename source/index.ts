@@ -102,11 +102,11 @@ app.set("view engine", "pug");
 app.get("/", (req: Request, res: Response) => {
     res.render("index", {
         meta: {
-            title: "Glynet",
-            description: "Glynet'teki yeni haberlerden ve gelişmelerden haberdar olun.",
+            title: "Looplens",
+            description: "Looplens'teki yeni haberlerden ve gelişmelerden haberdar olun.",
             url: "https://glynet.com",
             image: "https://res.cloudinary.com/dsr7kja6p/image/upload/v1666044163/BlogBanner_od3mxo.png",
-            twitter: "@glynet",
+            twitter: "@looplens",
             twitter_card: "summary_large_image",
             color: "#2aa0ad",
         },
@@ -118,7 +118,7 @@ app.use((req: Request, res: Response, next: NextFunction) => {
     log('\x1b[31m', `Someone is trying to access a non-existent page. => ${req.url}`);
     res.status(404).send("01000010 01100101 01101110 01101001 00100000 01101101 01100001 01111010 01110101 01110010 00100000 01100111 01101111 01110010 01110101 01101110 00101100 00100000 01100010 01110101 00100000 01101110 01100101 00100000 01110011 00100001 00100001 00110001 00100001 00111111")
 });
-  
+
 app.use((err: any, req: Request, res: Response, next: NextFunction) => {
     console.error(err.stack)
     res.status(500).send("Bir şeyler kırıldı... (Kalbim değil)")

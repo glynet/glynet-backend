@@ -9,6 +9,6 @@ const notifications = express.Router();
 
 notifications.get("/", Notifications);
 notifications.get("/", Subscribed);
-notifications.post("/", UpdateUser);
+notifications.post("/update", UpdateUser);
 
 export default notifications;

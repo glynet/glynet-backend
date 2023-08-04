@@ -6,8 +6,10 @@ import Followers from "./followers";
 import Barrier from "./barrier";
 import Follow from "./follow";
 
+
 // /api/@me/profile/*
 const profile = express.Router();
+
 
 profile.get("/", Profile);
 profile.get("/followings", Followings);

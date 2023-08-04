@@ -16,7 +16,7 @@ export default async function handler(req: Request, res: Response) {
 
     const { user_id, type } = req.body;
 
-    if (user_id && type) {
+    if ((user_id && type) && user_id !== auth.snowflake) {
         if (NotificationTypes[type] !== undefined) {
             const user = await prisma.users.findFirst({
                 where: { snowflake: user_id }
@@ -61,7 +61,15 @@ export default async function handler(req: Request, res: Response) {
                         status: true
                     });
                 }
+            } else {
+                return res.send({
+                    status: false
+                });
             }
+        } else {
+            return res.send({
+                status: false
+            });
         }
     }
 

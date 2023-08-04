@@ -58,7 +58,7 @@ export default async function handler(req: Request, res: Response) {
 
             for (const comment of get_comments) {
                 const comment_author = await getUser(comment.author_id)
-            
+
                 if (comment_author.is_user_ready) {
                     const flags = calculateUserFlags(comment_author.data.flags);
 
@@ -85,7 +85,7 @@ export default async function handler(req: Request, res: Response) {
                             }
                         });
 
-                        if (replies_count !== 0) {                        
+                        if (replies_count !== 0) {
                             const get_reply = await prisma.comments.findFirst({
                                 where: {
                                     replied_to: comment.id.toString(),
@@ -95,7 +95,7 @@ export default async function handler(req: Request, res: Response) {
                             if (get_reply) {
                                 const reply_author = await getUser(get_reply.author_id);
 
-                                if (reply_author) {   
+                                if (reply_author) {
                                     replies.push({
                                         id: get_reply.snowflake,
                                         user: reply_author,
@@ -123,19 +123,17 @@ export default async function handler(req: Request, res: Response) {
                         response.push({
                             id: comment.snowflake,
                             user: comment_author,
-                            comment: {
-                                content: comment.content,
-                                attachments: comment.attachments.length !== 0 ? comment.attachments.split(",") : [],
-                                likes: {
-                                    count: likes,
-                                    is_liked: is_liked !== null
-                                }
-                            },
-                            position: 0,
+
+                            content: comment.content,
+                            react_count: likes,
+                            is_liked: is_liked !== null,
+
                             post_id: post_control[0].snowflake,
+
                             replied_to: reply_id, // count
                             replies: replies,
                             reply_count: replies_count,
+
                             flags: Number(comment.flags),
                             timestamp: Number(comment.timestamp)
                         });

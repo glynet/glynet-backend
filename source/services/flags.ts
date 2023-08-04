@@ -1,7 +1,7 @@
 enum UserFlags {
     GLYNET_EMPLOYEE, // 1
-    VERIFIED_USER, // 2 
-    ARTIST_USER, // 4 
+    VERIFIED_USER, // 2
+    ARTIST_USER, // 4
     SPAMMER, // 8
     SYSTEM,  // 16
     HAS_UNREAD_URGENT_MESSAGES, //32
@@ -29,7 +29,8 @@ enum NotificationFlags {
 enum CommentsFlags {
     SELF_DELETED,
     SYSTEM_DELETED,
-    POST_DELETED
+    POST_DELETED,
+    CONTAINS_GIF
 }
 
 function calculateFlags(type: any, flag: number) {

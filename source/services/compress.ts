@@ -39,7 +39,7 @@ export default class Compress {
     setPath(path: string) {
         this.path = path;
         const iskeepingFile = this.keepOriginal ? path + "original/" : path;
-        
+
         fs.mkdirSync(iskeepingFile, {
             recursive: true,
         });
@@ -50,7 +50,7 @@ export default class Compress {
         const BIT = 56;
 
         const diff = Math.floor(bytes / ONE_MB);
-        
+
         if (diff < 5) {
             return 128
         } else {
@@ -95,7 +95,7 @@ export default class Compress {
     async compressImages(r: any) {
         const type = r.originalname.split(".")[r.originalname.split(".").length - 1];
         const quality = 50;
-       
+
         if (type === "mp4" || type === "mov") {
             console.log(moment());
             console.log(this.getPath(this.filename, true, null))
@@ -115,12 +115,12 @@ export default class Compress {
 
             /* if (this.path.split("/").includes("shots"))  {
                 if (this.isCollapsed) {
-                    //vidPeg.addOptions([`-filter:v drawtext=fontfile=${path.resolve(__dirname, "..", "..", "..", "static", "assets", "fonts", "Gilroy-Bold", "Gilroy-Bold.ttf")}:text=glynet.com/@sinojektif:fontsize=10:fontcolor=white:x=0:y=10:shadowcolor=black:shadowx=2:shadowy=2,scale=-1:1280,crop='min(720,1*ih)':'min(iw/1,ih)`])
+                    //vidPeg.addOptions([`-filter:v drawtext=fontfile=${path.resolve(__dirname, "..", "..", "..", "static", "assets", "fonts", "Gilroy-Bold", "Gilroy-Bold.ttf")}:text=looplens.com/@sinojektif:fontsize=10:fontcolor=white:x=0:y=10:shadowcolor=black:shadowx=2:shadowy=2,scale=-1:1280,crop='min(720,1*ih)':'min(iw/1,ih)`])
                     // vidPeg.addOptions([`-filter:v scale=w=1280:h=720,drawtext=text='watermarkText':x=W/2:y=H-th-10:fontsize=72:fontcolor=green -vcodec libx264 -crf 10 ${this.getPath(this.filename, true, null).replace("/original", "")}`])
                     // vidPeg.videoFilters(data).size("720x1280")
                 } else {
                     vidPeg.size("720x1280").aspect("9:16").autopad()
-                    //.addOptions([`-filter:v drawtext=fontfile=${path.resolve(__dirname, "..", "..", "..", "static", "assets", "fonts", "Gilroy-Bold", "Gilroy-Bold.ttf")}:text=glynet.com/@sinojektif:fontsize=10:fontcolor=white:x=0:y=10:shadowcolor=black:shadowx=2:shadowy=2`])
+                    //.addOptions([`-filter:v drawtext=fontfile=${path.resolve(__dirname, "..", "..", "..", "static", "assets", "fonts", "Gilroy-Bold", "Gilroy-Bold.ttf")}:text=looplens.com/@sinojektif:fontsize=10:fontcolor=white:x=0:y=10:shadowcolor=black:shadowx=2:shadowy=2`])
                 }
             } */
 
@@ -170,7 +170,7 @@ export default class Compress {
             const metaData: any = await ffprobePromise(filePath);
 
             mediaType = "video";
-            
+
             if (metaData) {
                 contentHeight = metaData.streams[0].height;
                 contentWidth = metaData.streams[0].width;

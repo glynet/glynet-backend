@@ -15,12 +15,12 @@ export default async function handler(req: Request, res: Response) {
 
     if (params.q) {
         const response: UserList[] = [];
-        
+
         const comment_control = await prisma.comments.findFirst({
             where: { snowflake: params.q.toString() }
         });
 
-        if (comment_control && comment_control.flags === 0) {
+        if (comment_control) {
             const likes = await prisma.comment_likes.findMany({
                 where: { comment_id: comment_control.id.toString() }
             });
@@ -50,13 +50,13 @@ export default async function handler(req: Request, res: Response) {
             }
 
             return res.send({
-                status: true,
-                list: response
+                available: true,
+                data: response
             })
         }
     }
-    
+
     return res.send({
-        status: false
+        available: false
     });
 }

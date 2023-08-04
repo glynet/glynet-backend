@@ -19,11 +19,7 @@ export default async function handler(req: Request, res: Response) {
         });
 
         if (profile_data) {
-            if (profile_data.id === auth.id) {
-                res.send({
-                    status: "error"
-                });
-            } else {
+            if (profile_data.id !== auth.id) {
                 const is_blocked = await prisma.blocks.findMany({
                     where: {
                         client_id: auth.id.toString(),
@@ -64,21 +60,13 @@ export default async function handler(req: Request, res: Response) {
                         return res.send({
                             status: "blocked"
                         });
-                    } else {
-                        return res.send({
-                            status: "error"
-                        });
                     }
                 }
             }
-        } else {
-            return res.send({
-                status: "error"
-            });
         }
-    } else {
-        return res.send({
-            status: "error"
-        });
     }
+
+    return res.send({
+        status: "error"
+    });
 }

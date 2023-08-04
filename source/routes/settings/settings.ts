@@ -39,7 +39,7 @@ settings.get("/username_available", async function (req: Request, res: Response)
         const control = await prisma.users.findFirst({
             where: { username: username.toString() }
         });
-        
+
         if (control === null) {
             return res.send({
                 available: true,
@@ -59,7 +59,7 @@ settings.get("/email_available", async function (req: Request, res: Response) {
         const control = await prisma.users.findFirst({
             where: { email: email.toString() }
         });
-        
+
         if (control === null) {
             return res.send({
                 available: true,
@@ -79,11 +79,11 @@ settings.get("/email_available", async function (req: Request, res: Response) {
     const is_premium = false;
     let avatar_url: string = auth.avatar;
 
-    if ((req.files as any).length < 1) 
+    if ((req.files as any).length < 1)
         return res.send({
             status: "bad_request",
         });
-        
+
     if (!(req.files as any)[0].originalname.toLowerCase().match(/\.(jpg|jpeg|png|gif)$/)) {
         return res.send({
             status: "bad_request",
@@ -122,7 +122,7 @@ settings.get("/email_available", async function (req: Request, res: Response) {
 
     const is_premium = true;
     let banner_url: string = auth.banner;
-    if ((req.files as any).length < 1) 
+    if ((req.files as any).length < 1)
         return res.send({
             status: "bad_request"
         });
@@ -136,12 +136,12 @@ settings.get("/email_available", async function (req: Request, res: Response) {
             return res.send({
                 status: "premium_error",
             });
-        } 
+        }
     }
 
     const importer = await importFile([(req.files as any)[0]], `./attachments/${auth.snowflake}/banners/${generateSnowflakeID()}/`);
     banner_url = (importer.filePaths as string);
-    
+
     const update = await prisma.users.update({
         where: { id: auth.id },
         data: { banner: banner_url }
@@ -209,7 +209,7 @@ settings.post("/edit_profile", async function (req: Request, res: Response) {
     if (update) {
         return res.send({
             status: true
-        }); 
+        });
     }
 
     return res.send({
@@ -224,7 +224,7 @@ settings.post("/update_email", async function (req: Request, res: Response) {
     const { email } = req.body;
     const emailRegex = /^\w+([.-]?\w+)*@\w+([.-]?\w+)*(\.\w{2,3})+$/;
     const verifyCode = (crypto.randomInt(1000000, 9999999)).toString();
-    
+
     if (email) {
         if (emailRegex.test(email)) {
 
@@ -240,24 +240,24 @@ settings.post("/update_email", async function (req: Request, res: Response) {
                     data: {
                         email: email,
                         verify_code: verifyCode,
-                        flags: 
-                            calculateUserFlags(auth.flags).includes("VERIFIED_MAIL") ? 
-                                auth.flags - 64 : auth.flags         
+                        flags:
+                            calculateUserFlags(auth.flags).includes("VERIFIED_MAIL") ?
+                                auth.flags - 64 : auth.flags
                     }
                 });
-            
+
                 if (update) {
                     sendMail({
                         from: "noreply",
                         to: email,
                         subject: "E-Posta Doğrulama",
                         title: "Doğrulama kodunuz",
-                        content: `Merhaba, Glynet e-posta adresiniz başarıyla güncellenmiştir. Doğrulama kodunuz: <b>${verifyCode}</b><br>Keyifli günler dileriz.`
+                        content: `Merhaba, Looplens e-posta adresiniz başarıyla güncellenmiştir. Doğrulama kodunuz: <b>${verifyCode}</b><br>Keyifli günler dileriz.`
                     });
 
                     return res.send({
                         status: "updated"
-                    }); 
+                    });
                 }
             } else {
                 return res.send({
@@ -286,7 +286,7 @@ settings.post("/verify_email", async function (req: Request, res: Response) {
 
     const { code } = req.body;
 
-    if (code) {       
+    if (code) {
 
         if (code === auth.verify_code) {
 
@@ -297,14 +297,14 @@ settings.post("/verify_email", async function (req: Request, res: Response) {
                         flags: auth.flags + 64
                     }
                 });
-            
+
                 if (update) {
                     sendMail({
                         from: "noreply",
                         to: auth.email,
                         subject: "E-posta adresiniz güncellendi",
                         title: "E-posta adresiniz güncellendi",
-                        content: `Merhaba, Glynet hesabınız <a href="https://glynet.com/@${auth.username}" target="_blank">(@${auth.username})</a> artık bu e-posta hesabı ile ilişkilendirilmiştir. <br>Keyifli günler dileriz.`
+                        content: `Merhaba, Looplens hesabınız <a href="https://glynet.com/@${auth.username}" target="_blank">(@${auth.username})</a> artık bu e-posta hesabı ile ilişkilendirilmiştir. <br>Keyifli günler dileriz.`
                     });
 
                     return res.send({
@@ -314,7 +314,7 @@ settings.post("/verify_email", async function (req: Request, res: Response) {
             } else {
                 return res.send({
                     status: "verified_before"
-                }); 
+                });
             }
         } else {
             return res.send({
@@ -322,7 +322,7 @@ settings.post("/verify_email", async function (req: Request, res: Response) {
             });
         }
     }
-    
+
     return res.send({
         status: "error"
     });
@@ -339,7 +339,7 @@ settings.post("/update_password", async function (req: Request, res: Response) {
             if (new_password === new_password_again) {
                 if (!await argon2.verify(auth.password, new_password)) {
                     const new_hashed_password = await argon2.hash(new_password);
-                    
+
                     const token = crypto
                             .createHash("sha256")
                             .update(uuidv4())
@@ -347,7 +347,7 @@ settings.post("/update_password", async function (req: Request, res: Response) {
 
                     const update = await prisma.users.update({
                         where: { id: auth.id },
-                        data: { 
+                        data: {
                             password: new_hashed_password,
                             token: token
                         }
@@ -359,7 +359,7 @@ settings.post("/update_password", async function (req: Request, res: Response) {
                             to: auth.email,
                             subject: "Şifreniz güncellendi",
                             title: "Şifreniz güncellendi",
-                            content: `Merhaba ${auth.name}, Glynet şifreniz başarıyla güncellendi!<br>Bu işlem size ait değilse vakit kaybetmeden şifrenizi güncelleyin.`
+                            content: `Merhaba ${auth.name}, Looplens şifreniz başarıyla güncellendi!<br>Bu işlem size ait değilse vakit kaybetmeden şifrenizi güncelleyin.`
                         });
 
                         return res.send({
@@ -371,7 +371,7 @@ settings.post("/update_password", async function (req: Request, res: Response) {
             }
         }
     }
-    
+
     return res.send({
         status: false
     });
@@ -383,10 +383,10 @@ settings.post("/privacy_update", async function (req: Request, res: Response) {
 
     const { hide_followings, private_profile, filter_nsfw, hide_search_engine, scan_messages } = req.body;
 
-    if ( 
+    if (
         typeof hide_followings === "boolean" &&
-        typeof private_profile === "boolean" && 
-        typeof filter_nsfw === "boolean" && 
+        typeof private_profile === "boolean" &&
+        typeof filter_nsfw === "boolean" &&
         typeof hide_search_engine === "boolean" &&
         (typeof scan_messages === "number" && scan_messages >= 0 && scan_messages <= 2)
     ) {
@@ -405,15 +405,15 @@ settings.post("/privacy_update", async function (req: Request, res: Response) {
                     private_profile: private_profile,
                     filter_nsfw: filter_nsfw,
                     hide_search_engine: hide_search_engine,
-                    scan_messages: 
-                        scan_messages === 0 ? 
-                        "trust_everyone" : 
-                            scan_messages === 1 ? 
-                                "trust_common_friends" : 
+                    scan_messages:
+                        scan_messages === 0 ?
+                        "trust_everyone" :
+                            scan_messages === 1 ?
+                                "trust_common_friends" :
                                 "never_trust",
                     updated_at: new Date()
                 }
-            }); 
+            });
 
             if (update) {
                 return res.send({
@@ -428,15 +428,15 @@ settings.post("/privacy_update", async function (req: Request, res: Response) {
                     private_profile: private_profile,
                     filter_nsfw: filter_nsfw,
                     hide_search_engine: hide_search_engine,
-                    scan_messages: 
-                        scan_messages === 0 ? 
-                            "trust_everyone" : 
-                            scan_messages === 1 ? 
-                                "trust_common_friends" : 
+                    scan_messages:
+                        scan_messages === 0 ?
+                            "trust_everyone" :
+                            scan_messages === 1 ?
+                                "trust_common_friends" :
                                 "never_trust",
                     updated_at: new Date()
                 }
-            }); 
+            });
 
             if (create) {
                 return res.send({
@@ -471,11 +471,11 @@ settings.post("/update_notifications", async function (req: Request, res: Respon
             calculate_flags += 1;
         if (mention_alerts)
             calculate_flags += 2;
-        if (comments_mention_alert) 
+        if (comments_mention_alert)
             calculate_flags += 4;
-        if (announcements) 
+        if (announcements)
             calculate_flags += 8;
-        if (tips) 
+        if (tips)
             calculate_flags += 16;
 
         const update = await prisma.users.update({
@@ -509,21 +509,21 @@ settings.delete("/delete", async function (req: Request, res: Response) {
         case "delete":
             if (code) {
                 const code_control = await prisma.delete_account.findFirst({
-                    where: { 
-                        client_id: auth.id.toString(), 
-                        token: code 
+                    where: {
+                        client_id: auth.id.toString(),
+                        token: code
                     }
                 });
 
                 if (code_control) {
                     if (moment().unix() < moment(code_control.timestamp).unix()) {
                         const random_code = (crypto.randomInt(1000000000, 9999999999)).toString();
-                        
+
                         const token = crypto
                             .createHash("sha256")
                             .update(uuidv4())
                             .digest("hex");
-                            
+
                         const update = await prisma.users.update({
                             where: {
                                 id: auth.id
@@ -531,7 +531,7 @@ settings.delete("/delete", async function (req: Request, res: Response) {
                             data: {
                                 flags: auth.flags + 1024,
                                 username: `deleted_user_${random_code}`,
-                                email: `deleted_user_${random_code}@ghost.glynet.com.tr`,
+                                email: `deleted_user_${random_code}@ghost.looplens.com.tr`,
                                 token: token
                             }
                         });
@@ -563,7 +563,7 @@ settings.delete("/delete", async function (req: Request, res: Response) {
                                     user_id: auth.id.toString()
                                 }
                             });
-                            
+
                             const delete_comments = await prisma.comments.updateMany({
                                 where: {
                                     author_id: auth.id.toString()
@@ -578,7 +578,7 @@ settings.delete("/delete", async function (req: Request, res: Response) {
                                     client_id: auth.id.toString()
                                 }
                             });
-                            
+
                             return res.send({
                                 status: "success"
                             });
@@ -601,7 +601,7 @@ settings.delete("/delete", async function (req: Request, res: Response) {
                 }
             }
             break;
-    
+
         case "verify":
         default:
             if (password && password_confirm) {
@@ -623,10 +623,10 @@ settings.delete("/delete", async function (req: Request, res: Response) {
                                 from: "noreply",
                                 to: auth.email,
                                 subject: "Hesabını kalıcı sil",
-                                title: "Glynet hesabını kalıcı sil",
-                                content: `Merhaba, ${auth.name} (@${auth.username}) Glynet hesabını kalıcı olarak silmek istediğini öğrendik. İstersen hesabını dondurabilir veya kalıcı olarak silebilrsin. İşte hesabını kalıcı olarak silmen için gerekli sihirli sayılar: <b>${verify_code}</b><br>Keyifli günler dileriz.`
+                                title: "Looplens hesabını kalıcı sil",
+                                content: `Merhaba, ${auth.name} (@${auth.username}) Looplens hesabını kalıcı olarak silmek istediğini öğrendik. İstersen hesabını dondurabilir veya kalıcı olarak silebilrsin. İşte hesabını kalıcı olarak silmen için gerekli sihirli sayılar: <b>${verify_code}</b><br>Keyifli günler dileriz.`
                             });
-                            
+
                             return res.send({
                                 status: "mail_sent"
                             });
@@ -685,9 +685,9 @@ settings.delete("/delete", async function (req: Request, res: Response) {
                             from: "noreply",
                             to: auth.email,
                             subject: "Hesabını geçiçi olarak dondur",
-                            title: "Glynet hesabınız donduruldu",
-                            content: `Merhaba, ${auth.name} (@${auth.username}) Glynet hesabınız donduruldu. Dilediğiniz vakitte hesabınıza tekrar giriş yapabilirsiniz. <br>Keyifli günler dileriz.`
-                        }); 
+                            title: "Looplens hesabınız donduruldu",
+                            content: `Merhaba, ${auth.name} (@${auth.username}) Looplens hesabınız donduruldu. Dilediğiniz vakitte hesabınıza tekrar giriş yapabilirsiniz. <br>Keyifli günler dileriz.`
+                        });
                         return res.send({
                             status: "success"
                         })
@@ -695,7 +695,7 @@ settings.delete("/delete", async function (req: Request, res: Response) {
                 } return res.send({
                     status: "has_frozen_before"
                 })
-                
+
             } else {
                 return res.send({
                     status: "wrong_password"
@@ -711,7 +711,7 @@ settings.delete("/delete", async function (req: Request, res: Response) {
             status: "password_field_empty"
         })
     }
-    
+
 
     return res.send({
         status: false

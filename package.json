@@ -26,6 +26,7 @@
     "express-delay": "^0.2.0",
     "express-rate-limit": "^6.7.0",
     "express-useragent": "^1.0.15",
+    "fast-average-color-node": "^2.6.0",
     "flakeid": "^1.0.1",
     "fluent-ffmpeg": "^2.1.2",
     "fs": "^0.0.1-security",
@@ -53,9 +54,9 @@
     "dev": "nodemon source/index.ts",
     "build": "tsc"
   },
-  "name": "glynet-api",
+  "name": "looplens-api",
   "version": "1.0.0",
   "main": "index.js",
-  "author": "Glynet",
+  "author": "Metehan Saral",
   "license": "MIT"
 }

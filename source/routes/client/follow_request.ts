@@ -1,44 +1,55 @@
 import { Request, Response } from "express";
 import { PrismaClient } from "@prisma/client";
 import Auth from "../../services/auth";
-import getAvatar from "../../helpers/getAvatar";
+import getUser from "../../helpers/getUser";
 
 const prisma = new PrismaClient();
 
 export default async function handler(req: Request, res: Response) {
+    const { user_id, accept } = req.body;
+
     const auth = await Auth(req, res);
     if (!auth) return;
 
-    const response: any[] = [];
+    const user_control = await getUser(user_id, "snowflake", true)
 
-    const follow_requests = await prisma.followings.findMany({
-        where: {
-            following_id: auth.id,
-            accept: 0
-        }
-    });
-
-    for (const request of follow_requests) {
-        const user = await prisma.users.findFirst({
-            where: {
-                id: request.follower_id
-            }
-        });
-
-        if (user) {
-            response.push({
-                user: {
-                    id: user.snowflake,
-                    name: user.name,
-                    username: user.username,
-                    avatar: await getAvatar(user),
-                    flags: user.flags
+    if (user_control.is_user_ready) {
+        if (accept) {
+            const update = await prisma.followings.updateMany({
+                where: {
+                    following_id: auth.id,
+                    follower_id: parseInt(user_control.data.id)
+                },
+                data: {
+                    accept: 1
                 }
-            });
+            })
+
+            if (update) {
+                return res.send({
+                    status: true,
+                    code: 0x0
+                })
+            }
+        } else {
+            const remove = await prisma.followings.deleteMany({
+                where: {
+                    following_id: auth.id,
+                    follower_id: parseInt(user_control.data.id)
+                }
+            })
+
+            if (remove) {
+                return res.send({
+                    status: true,
+                    code: 0x1
+                })
+            }
         }
     }
 
-    res.send({
-        list: response
-    });
+    return res.send({
+        status: false,
+        code: 0x32
+    })
 }

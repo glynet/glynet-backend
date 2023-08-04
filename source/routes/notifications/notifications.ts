@@ -26,7 +26,7 @@ export default async function handler(req: Request, res: Response) {
         }
     });
 
-    for (const notification of get_notifications) {        
+    for (const notification of get_notifications) {
         const details = notification.data as any;
         let extend: any = {};
 
@@ -61,9 +61,9 @@ export default async function handler(req: Request, res: Response) {
                                         extend = {
                                             post: {
                                                 content: {
-                                                    attachment: comment.attachments.length !== 0 && comment.attachments.split(",")[0],
+                                                    attachment: "",
                                                     text: comment.content,
-                                                    type: findContentType(comment.attachments.split(",")[0])
+                                                    type: ""
                                                 },
                                                 author: {
                                                     id: postAuthor.snowflake,
@@ -200,16 +200,19 @@ export default async function handler(req: Request, res: Response) {
         }
     }
 
+    const follow_r_count = await prisma.followings.count({
+        where: {
+            following_id: auth.id,
+            accept: 0
+        }
+    })
+    console.log(follow_r_count)
+
     res.send({
         available: true,
         follow_requests: {
             is_private: privacy.is_private,
-            count: await prisma.followings.count({
-                where: {
-                    following_id: auth.id,
-                    accept: 0
-                }
-            })
+            count: follow_r_count
         },
         list: response
     });

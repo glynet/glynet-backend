@@ -81,7 +81,7 @@ export default async function handler(req: Request, res: Response) {
                                 to: email,
                                 subject: "E-Posta Doğrulama",
                                 title: "Doğrulama kodunuz",
-                                content: `Merhaba, Glynet doğrulama kodunuz: <b>${verifyCode}</b><br>Keyifli günler dileriz.`
+                                content: `Merhaba, Looplens doğrulama kodunuz: <b>${verifyCode}</b><br>Keyifli günler dileriz.`
                             });
 
 

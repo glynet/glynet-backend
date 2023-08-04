@@ -54,16 +54,15 @@ model comment_likes {
 }
 
 model comments {
-  id          Int    @id @default(autoincrement())
-  snowflake   String @db.VarChar(60)
-  author_id   String @db.VarChar(30)
-  content     String @db.VarChar(512)
-  attachments String @db.LongText
-  replied_to  String @db.VarChar(30)
-  post_id     String @db.VarChar(30)
-  type        String @db.VarChar(30)
-  flags       Int
-  timestamp   Int
+  id         Int    @id @default(autoincrement())
+  snowflake  String @db.VarChar(60)
+  author_id  String @db.VarChar(30)
+  content    String @db.VarChar(512)
+  replied_to String @db.VarChar(30)
+  post_id    String @db.VarChar(30)
+  type       String @db.VarChar(30)
+  flags      Int
+  timestamp  Int
 }
 
 model emojis {
